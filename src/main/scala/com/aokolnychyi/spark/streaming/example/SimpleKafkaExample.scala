@@ -12,6 +12,9 @@ object SimpleKafkaExample {
 
   def main(args: Array[String]): Unit = {
 
+    val sparkConfig = new SparkConf().setMaster("local[4]").setAppName("Spark Kafka Test")
+    val streamingContext = new StreamingContext(sparkConfig, Seconds(5))
+
     val kafkaParams = Map[String, Object](
       "bootstrap.servers" -> "localhost:9092",
       "key.deserializer" -> classOf[StringDeserializer],
@@ -21,8 +24,6 @@ object SimpleKafkaExample {
       "enable.auto.commit" -> (false: java.lang.Boolean)
     )
 
-    val sparkConfig = new SparkConf().setMaster("local[4]").setAppName("Spark Kafka Test")
-    val streamingContext = new StreamingContext(sparkConfig, Seconds(5))
     val topics = Array("spark-test-4-partitions")
 
     val stream = KafkaUtils.createDirectStream[String, String](
