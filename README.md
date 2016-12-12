@@ -65,3 +65,7 @@ with its Consumer API.
 12. If you're doing multiple output operations and aren't caching, Spark is going to read from Kafka 
 again each time, and if some of those reads are happening for the same group and same topicpartition, 
 it's not going to work.
+
+13. Output operations by default ensure at-least once semantics because it depends on the type of 
+output operation (idempotent, or not) and the semantics of the downstream system (supports transactions or not). 
+But users can implement their own transaction mechanisms to achieve exactly-once semantics. 
