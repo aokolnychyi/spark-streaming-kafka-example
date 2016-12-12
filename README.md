@@ -56,4 +56,12 @@ not updated within the specified timeout will be removed from the state).
 10. Consider parallelizing the data receiving. Each input DStream creates a single receiver (running
  on a worker machine) that receives a single stream of data. Receiving multiple data streams can 
  therefore be achieved by creating multiple input DStreams and configuring them to receive different 
- partitions of the data stream from the source(s). 
+ partitions of the data stream from the source(s).
+ 
+11. If you assign the same group id to several consumer instances then all the consumers will get 
+different set of messages on the same topic. This is a kind of load balancing which kafka provides 
+with its Consumer API.
+
+12. If you're doing multiple output operations and aren't caching, Spark is going to read from Kafka 
+again each time, and if some of those reads are happening for the same group and same topicpartition, 
+it's not going to work.
