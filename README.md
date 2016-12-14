@@ -68,4 +68,14 @@ it's not going to work.
 
 13. Output operations by default ensure at-least once semantics because it depends on the type of 
 output operation (idempotent, or not) and the semantics of the downstream system (supports transactions or not). 
-But users can implement their own transaction mechanisms to achieve exactly-once semantics. 
+But users can implement their own transaction mechanisms to achieve exactly-once semantics.
+
+14. Checkpointing of RDDs incurs the cost of saving to reliable storage. This may cause an increase 
+in the processing time of those batches where RDDs get checkpointed. Hence, the interval of 
+checkpointing needs to be set carefully. At small batch sizes (say 1 second), checkpointing every 
+batch may significantly reduce operation throughput. Conversely, checkpointing too infrequently causes
+the lineage and task sizes to grow, which may have detrimental effects. For stateful transformations 
+that require RDD checkpointing, the default interval is a multiple of the batch interval that is at 
+least 10 seconds. It can be set by using dstream.checkpoint(checkpointInterval). Typically, a checkpoint 
+interval of 5 - 10 sliding intervals of a DStream is a good setting to try.
+    
