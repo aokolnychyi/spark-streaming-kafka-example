@@ -78,4 +78,16 @@ the lineage and task sizes to grow, which may have detrimental effects. For stat
 that require RDD checkpointing, the default interval is a multiple of the batch interval that is at 
 least 10 seconds. It can be set by using dstream.checkpoint(checkpointInterval). Typically, a checkpoint 
 interval of 5 - 10 sliding intervals of a DStream is a good setting to try.
-    
+
+15. Good throughput is an extremely important point. Spark creates one receiver on one executor for each DStream based
+ on a receiver-based data source (e.g. socket). As a result, the data is stored on one executor and
+ all processing happens there since Spark tries to achieve data locality. As a result, the cluster is 
+  not utilized properly. There are two options so solve the problem. First, you can manually 
+  repartition your data so that it gets evenly distributed across all nodes. Second, you can increase
+  the number of receivers, which is a better option. Then you can just union those DStreams. In the 
+  latest version of Kafka, there are no Spark receivers. In this case, set the appropriate number of partitions
+  in Kafka. Each Kafka partition is mapped to a Spark partition. More partitions in Kafka == more 
+  paralellism. Spark uses Kafka to pull the data whenever is required.
+  
+16. Specify the number of partitions for each operation that involves shuffling the data if you are 
+not happy with the default value.
